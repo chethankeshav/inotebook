@@ -1,11 +1,16 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
-const Navbar = () => {
+const Navbar = (props) => {
     let location = useLocation();
-    useEffect(() => {
-        console.log(location)
-      }, [location]);
+    let history = useHistory();
+    const {showAlert} = props;
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        history.push('/login');
+        showAlert("Logged out successfully", "success")
+    }
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
@@ -22,10 +27,13 @@ const Navbar = () => {
                         <Link className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`} to="/about">About</Link>
                         </li>
                     </ul>
+                    {!localStorage.getItem('token') ? 
                     <form className="d-flex">
-                        <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <button className="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+                        <Link className="btn btn-primary mx-1" to="/login" role="button">Login</Link>
+                        <Link className="btn btn-primary mx-1" to="/signup" role="button">Signup</Link>
+                    </form> : 
+                    <button className="btn btn-primary"onClick={handleLogout}>Logout</button>
+                    }
                 </div>
             </div>
         </nav>
